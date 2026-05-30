@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maaf, Aku Lupa Prioritasku</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0c10;
+      --surface: #1a1520;
+      --card: #211c28;
+      --accent: #c97fa0;
+      --soft: #8a5572;
+      --gold: #d4a853;
+      --text: #ede0e8;
+      --muted: #7a6b78;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Lato', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── stars bg ── */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle linear infinite;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: .15; }
+      50%      { opacity: .7; }
+    }
+
+    /* ── page layout ── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    /* ── top icon ── */
+    .icon-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .8rem;
+      opacity: 0;
+      animation: fadeUp .8s .2s forwards;
+    }
+    .clock-moon {
+      font-size: 3.5rem;
+      filter: drop-shadow(0 0 18px rgba(201,127,160,.5));
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .icon-label {
+      font-size: .75rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    /* ── heading ── */
+    .heading {
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp .8s .4s forwards;
+    }
+    .heading h1 {
+      font-family: 'Libre Baskerville', serif;
+      font-size: clamp(1.9rem, 6vw, 3rem);
+      font-style: italic;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    .heading h1 span { color: var(--accent); }
+    .heading p {
+      margin-top: .7rem;
+      font-size: .95rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* ── timeline of neglect ── */
+    .timeline {
+      width: 100%;
+      opacity: 0;
+      animation: fadeUp .8s .65s forwards;
+    }
+    .timeline-title {
+      font-size: .7rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--soft);
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+    .tl-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: .9rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      position: relative;
+    }
+    .tl-item:last-child { border-bottom: none; }
+    .tl-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1.5px solid var(--soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: .15rem;
+    }
+    .tl-text .tl-what {
+      font-size: .95rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .tl-text .tl-impact {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: .2rem;
+      font-style: italic;
+    }
+
+    /* ── letter card ── */
+    .card {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid rgba(201,127,160,.18);
+      border-radius: 4px;
+      padding: clamp(1.8rem, 5vw, 3rem);
+      position: relative;
+      opacity: 0;
+      animation: fadeUp .8s .9s forwards;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 2rem; right: 2rem;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      border-radius: 2px;
+    }
+
+    .salutation {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--accent);
+      margin-bottom: 1.4rem;
+    }
+
+    .body-text {
+      font-size: 1rem;
+      line-height: 1.9;
+      font-weight: 300;
+      color: #d4c8d0;
+    }
+    .body-text p + p { margin-top: 1rem; }
+    .body-text em { color: var(--accent); font-style: italic; }
+    .body-text strong { color: var(--gold); font-weight: 400; }
+
+    .divider {
+      display: flex; align-items: center; gap: .8rem;
+      margin: 1.5rem 0;
+      color: var(--soft); font-size: .8rem;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,127,160,.3), transparent);
+    }
+
+    .promise-list {
+      list-style: none;
+      margin: 1rem 0;
+    }
+    .promise-list li {
+      padding: .5rem 0 .5rem 1.8rem;
+      position: relative;
+      font-size: .95rem;
+      font-weight: 300;
+      color: #d4c8d0;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .promise-list li:last-child { border-bottom: none; }
+    .promise-list li::before {
+      content: '✦';
+      position: absolute; left: 0;
+      color: var(--accent);
+      font-size: .65rem;
+      top: .65rem;
+    }
+
+    .signature {
+      margin-top: 2rem;
+      text-align: right;
+    }
+    .signature .closing { font-size: .9rem; color: var(--muted); margin-bottom: .3rem; }
+    .signature .name {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1.8rem;
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    /* ── cta button ── */
+    .cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .8rem;
+      opacity: 0;
+      animation: fadeUp .8s 1.3s forwards;
+    }
+    .btn {
+      padding: .85rem 2.8rem;
+      border: 1.5px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1rem;
+      font-style: italic;
+      border-radius: 40px;
+      cursor: pointer;
+      letter-spacing: .04em;
+      transition: background .25s, color .25s, box-shadow .25s, transform .2s;
+    }
+    .btn:hover {
+      background: var(--accent);
+      color: var(--bg);
+      box-shadow: 0 0 28px rgba(201,127,160,.4);
+      transform: translateY(-2px);
+    }
+    .btn-hint { font-size: .8rem; color: var(--muted); font-style: italic; }
+
+    /* ── overlay ── */
+    .overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(15,12,16,.92);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      gap: 1rem;
+    }
+    .overlay.show { display: flex; }
+    .ov-emoji { font-size: 4.5rem; animation: pop .5s cubic-bezier(.17,.67,.4,1.5) both; }
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .ov-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-style: italic;
+      color: var(--accent);
+      animation: fadeUp .5s .3s both;
+    }
+    .ov-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      font-weight: 300;
+      animation: fadeUp .5s .5s both;
+    }
+    .btn-close {
+      margin-top: 1.5rem;
+      padding: .6rem 2rem;
+      border: 1px solid var(--muted);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Lato', sans-serif;
+      font-size: .9rem;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+      animation: fadeUp .5s .7s both;
+    }
+    .btn-close:hover { border-color: var(--text); color: var(--text); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="page">
+
+  <!-- icon -->
+  <div class="icon-wrap">
+    <div class="clock-moon">🌙</div>
+    <span class="icon-label">untuk kamu yang kutinggalkan</span>
+  </div>
+
+  <!-- heading -->
+  <div class="heading">
+    <h1>Aku Sibuk… dan<br><span>Lupa Sama Kamu</span></h1>
+    <p>Maaf sudah membuatmu merasa tidak penting.</p>
+  </div>
+
+  <!-- timeline -->
+  <div class="timeline">
+    <p class="timeline-title">Yang aku sadari sekarang</p>
+
+    <div class="tl-item">
+      <div class="tl-dot">📵</div>
+      <div class="tl-text">
+        <p class="tl-what">Pesanmu sering kali terbaca, tapi tidak dibalas</p>
+        <p class="tl-impact">Kamu mungkin bertanya-tanya… apa aku masih peduli?</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot">🎉</div>
+      <div class="tl-text">
+        <p class="tl-what">Aku lebih memilih hang out sama teman</p>
+        <p class="tl-impact">Padahal waktu bersama kamu jauh lebih berharga</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot">🔕</div>
+      <div class="tl-text">
+        <p class="tl-what">Aku tidak peka saat kamu butuh diperhatikan</p>
+        <p class="tl-impact">Kamu diam, tapi sebenarnya kamu sedang menunggu</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot">💔</div>
+      <div class="tl-text">
+        <p class="tl-what">Kamu merasa tidak diprioritaskan</p>
+        <p class="tl-impact">Dan itu salahku sepenuhnya</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- letter -->
+  <div class="card">
+    <p class="salutation">Hei, kamu…</p>
+
+    <div class="body-text">
+      <p>
+        Aku tahu belakangan ini aku sering <em>tidak ada buat kamu</em>. Terlalu
+        sibuk sama teman, terlalu sering bilang "nanti", terlalu banyak
+        alasan — dan itu tidak adil buatmu.
+      </p>
+      <p>
+        Bukan berarti kamu tidak penting. Justru sebaliknya —
+        <strong>kamu adalah orang yang paling ingin aku jaga</strong>,
+        dan aku malah yang paling sering absen dari hidupmu.
+      </p>
+    </div>
+
+    <div class="divider">✦</div>
+
+    <p style="font-size:.82rem; letter-spacing:.15em; text-transform:uppercase; color:var(--soft); margin-bottom:.8rem;">Janjiku mulai sekarang</p>
+    <ul class="promise-list">
+      <li>Membalas pesanmu tepat waktu, bukan "nanti kalau sempat"</li>
+      <li>Menyisihkan waktu khusus untuk kita, bukan sisa-sisa waktu</li>
+      <li>Tidak lagi membuat kamu merasa bersaing dengan teman-temanku</li>
+      <li>Hadir — benar-benar hadir — saat kamu butuh aku</li>
+    </ul>
+
+    <div class="divider">✦</div>
+
+    <div class="body-text">
+      <p>
+        Aku tidak minta kamu langsung percaya. Tapi beri aku kesempatan
+        untuk <em>membuktikannya lewat tindakan</em>, bukan cuma kata-kata.
+      </p>
+    </div>
+
+    <div class="signature">
+      <p class="closing">Dengan penyesalan & cinta,</p>
+      <p class="name">Aku 🌹</p>
+    </div>
+  </div>
+
+  <!-- cta -->
+  <div class="cta">
+    <button class="btn" onclick="showForgiven()">💕 Aku Memaafkanmu</button>
+    <p class="btn-hint">tekan bila kamu sudah siap…</p>
+  </div>
+
+</div>
+
+<!-- overlay -->
+<div class="overlay" id="overlay">
+  <div class="ov-emoji">🌙✨</div>
+  <h2 class="ov-title">Terima kasih, Sayang</h2>
+  <p class="ov-sub">Aku berjanji tidak akan membuatmu merasa terlupakan lagi.<br>Kamu yang pertama, selalu.</p>
+  <button class="btn-close" onclick="closeOverlay()">Tutup</button>
+</div>
+
+<script>
+  // stars
+  const s = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const el = document.createElement('div');
+    el.className = 'star';
+    const sz = Math.random() * 2.5 + .5;
+    el.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      top:${Math.random()*100}%;
+      left:${Math.random()*100}%;
+      animation-duration:${2+Math.random()*5}s;
+      animation-delay:${Math.random()*6}s;
+    `;
+    s.appendChild(el);
+  }
+
+  function showForgiven() {
+    document.getElementById('overlay').classList.add('show');
+    setTimeout(() => {
+      window.open('https://wa.me/6281252425581?text=Aku+memaafkanmu+%F0%9F%92%95', '_blank');
+    }, 1500);
+  }
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('show');
+  }
+</script>
+</body>
+</html>
